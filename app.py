@@ -72,7 +72,15 @@ def analyze_code(source):
                 for child in ast.walk(target):
                     if isinstance(child, ast.Name):
                         assigned_names.add(child.id)
-        elif isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+        elif isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            assigned_names.add(node.name)
+            for arg in node.args.posonlyargs + node.args.args + node.args.kwonlyargs:
+                assigned_names.add(arg.arg)
+            if node.args.vararg:
+                assigned_names.add(node.args.vararg.arg)
+            if node.args.kwarg:
+                assigned_names.add(node.args.kwarg.arg)
+        elif isinstance(node, ast.ClassDef):
             assigned_names.add(node.name)
         elif isinstance(node, (ast.Import, ast.ImportFrom)):
             for alias in node.names:
