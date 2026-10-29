@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A beginner-friendly Python code analysis and learning assistant.">
+  <title>Smart Code Learning Assistant</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <header class="site-header">
+    <div class="nav wrap">
+      <a class="brand" href="{{ url_for('index') }}"><span class="brand-icon">⌘</span> CodeMentor</a>
+      <span class="nav-label">SMART CODE LEARNING ASSISTANT</span>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hero">
+      <div class="hero-copy">
+        <span class="eyebrow">LEARN BY DEBUGGING</span>
+        <h1>Understand your code.<br><span>One error at a time.</span></h1>
+        <p>Paste your Python code to find selected issues, understand why they matter, and learn how to fix them.</p>
+        <div class="hero-pills"><span>✓ Beginner-friendly</span><span>✓ Clear suggestions</span><span>✓ Instant analysis</span></div>
+      </div>
+      <div class="hero-art" aria-hidden="true"><div class="orb orb-one"></div><div class="orb orb-two"></div><div class="code-card"><div class="dots"><i></i><i></i><i></i></div><code><b>def</b> learn(code):<br>&nbsp;&nbsp;<em>try</em>:<br>&nbsp;&nbsp;&nbsp;&nbsp;understand(code)<br>&nbsp;&nbsp;<strong>except</strong> Mistake:<br>&nbsp;&nbsp;&nbsp;&nbsp;learn_more()</code><span class="floating-check">✓</span></div></div>
+    </section>
+
+    <section class="workspace">
+      <div class="section-heading"><div><span class="eyebrow">YOUR WORKSPACE</span><h2>Python code analyzer</h2></div><span class="language-tag">● Python 3</span></div>
+      <form method="post" action="{{ url_for('index') }}" class="editor-form">
+        <div class="editor-top"><span><span class="live-dot"></span> main.py</span><span class="editor-hint">Paste your code below</span></div>
+        <textarea name="code" id="code" spellcheck="false" placeholder="def greet(name):&#10;    print('Hello, ' + name)&#10;&#10;greet('world')" aria-label="Python source code">{{ code }}</textarea>
+        <div class="editor-footer"><span>Analysis runs on the server. Do not paste secrets or private code.</span><button type="submit" class="primary-btn">Analyze code <span aria-hidden="true">→</span></button></div>
+      </form>
+      <div class="sample-row"><span>Not sure where to start?</span><button type="button" id="sample-btn" class="text-btn">Load sample code</button><button type="button" id="clear-btn" class="text-btn muted">Clear editor</button></div>
+    </section>
+
+    {% if analyzed %}
+    <section class="results" id="results">
+      <div class="results-title"><div><span class="eyebrow">ANALYSIS REPORT</span><h2>Your learning snapshot</h2></div><div class="score"><span>Learning score</span><strong>{{ score }}<small>/100</small></strong></div></div>
+      <div class="stats-grid">
+        <div class="stat-card"><span class="stat-icon total-icon">⌁</span><span class="stat-label">Issues found</span><strong>{{ stats.total }}</strong></div>
+        <div class="stat-card"><span class="stat-icon green-icon">●</span><span class="stat-label">Beginner</span><strong>{{ stats.beginner }}</strong></div>
+        <div class="stat-card"><span class="stat-icon yellow-icon">●</span><span class="stat-label">Intermediate</span><strong>{{ stats.intermediate }}</strong></div>
+        <div class="stat-card"><span class="stat-icon orange-icon">●</span><span class="stat-label">Core</span><strong>{{ stats.core }}</strong></div>
+        <div class="stat-card"><span class="stat-icon red-icon">●</span><span class="stat-label">Critical</span><strong>{{ stats.critical }}</strong></div>
+      </div>
+      <div class="summary-banner {% if stats.total == 0 %}success-banner{% endif %}"><span class="summary-symbol">{% if stats.total == 0 %}✓{% else %}i{% endif %}</span><p>{{ summary }}</p></div>
+      {% if findings %}
+        <div class="findings-list">
+        {% for item in findings %}
+          <article class="finding finding-{{ item.color }}">
+            <div class="finding-head"><span class="category-badge badge-{{ item.color }}">{{ item.category_label }}</span>{% if item.line %}<span class="line-number">Line {{ item.line }}</span>{% endif %}</div>
+            <h3>{{ item.title }}</h3><p>{{ item.message }}</p>
+            {% if item.suggestion %}<div class="suggestion"><strong>💡 How to improve</strong><p>{{ item.suggestion }}</p></div>{% endif %}
+            {% if item.example %}<div class="example"><div class="example-label">Example</div><pre><code>{{ item.example }}</code></pre></div>{% endif %}
+          </article>
+        {% endfor %}
+        </div>
+      {% else %}
+        <div class="empty-state"><div class="empty-check">✓</div><h3>Nice work!</h3><p>No issues were found by these checks. Keep testing your code—this tool cannot prove a program is bug-free.</p></div>
+      {% endif %}
+    </section>
+    {% endif %}
+
+    <section class="how-section">
+      <div class="section-heading"><div><span class="eyebrow">HOW IT WORKS</span><h2>More than an error message</h2></div></div>
+      <div class="feature-grid">
+        <article class="feature-card"><div class="feature-icon purple">⌕</div><h3>Analyze</h3><p>Check Python syntax and selected common coding patterns.</p></article>
+        <article class="feature-card"><div class="feature-icon mint">✦</div><h3>Understand</h3><p>Read plain-language explanations and practical suggestions.</p></article>
+        <article class="feature-card"><div class="feature-icon peach">↗</div><h3>Improve</h3><p>Use each finding as a learning opportunity, not just a warning.</p></article>
+      </div>
+      <p class="disclaimer">Educational prototype: analysis is rule-based and limited. It does not execute submitted code and may miss logical or runtime errors.</p>
+    </section>
+  </main>
+  <footer><div class="wrap footer-inner"><span>⌘ CodeMentor</span><span>Built for curious minds. Keep learning, keep coding.</span></div></footer>
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
