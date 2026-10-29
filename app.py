@@ -38,14 +38,23 @@ def analyze_code(source):
     try:
         tree = ast.parse(source)
     except SyntaxError as exc:
-        findings.append(issue(
+        syntax_finding = issue(
             "beginner",
             "Python syntax error",
             exc.msg or "Python could not parse this code.",
             exc.lineno,
             "Check indentation, brackets, colons, and spelling near the reported line.",
             "if score > 10:\n    print('Great job!')",
-        ))
+        )
+        source_lines = source.splitlines()
+        if exc.lineno and 1 <= exc.lineno <= len(source_lines):
+            syntax_finding["source_line"] = source_lines[exc.lineno - 1]
+        syntax_finding["steps"] = [
+            "Start with the reported line number; Python stops parsing when it finds a syntax error.",
+            "Check this line and the previous line for a missing colon, bracket, quote, or incorrect indentation.",
+            "Use the example as a pattern, correct your own code, and click Analyze code again.",
+        ]
+        findings.append(syntax_finding)
         return findings, "Python could not analyze the rest of the program until the syntax error is fixed."
 
     # Lightweight, explainable checks; these are heuristics, not a complete bug detector.
