@@ -53,8 +53,11 @@
           <article class="finding finding-{{ item.color }}">
             <div class="finding-head"><span class="category-badge badge-{{ item.color }}">{{ item.category_label }}</span>{% if item.line %}<span class="line-number">Line {{ item.line }}</span>{% endif %}</div>
             <h3>{{ item.title }}</h3><p>{{ item.message }}</p>
-            {% if item.suggestion %}<div class="suggestion"><strong>💡 How to improve</strong><p>{{ item.suggestion }}</p></div>{% endif %}
-            {% if item.example %}<div class="example"><div class="example-label">Example</div><pre><code>{{ item.example }}</code></pre></div>{% endif %}
+            {% if item.source_line is not none %}<div class="example detected-code"><div class="example-label">Your code at line {{ item.line }}</div><pre><code>{{ item.source_line }}</code></pre></div>{% endif %}
+            {% if item.suggestion %}<div class="suggestion"><strong>💡 Recommended fix</strong><p>{{ item.suggestion }}</p></div>{% endif %}
+            {% if item.steps %}<div class="step-guide"><strong>🪜 Step-by-step explanation</strong><ol>{% for step in item.steps %}<li>{{ step }}</li>{% endfor %}</ol></div>{% endif %}
+            {% if item.corrected_line %}<div class="corrected-code"><div class="example-label">Suggested corrected line</div><pre><code>{{ item.corrected_line }}</code></pre><p>Review this suggestion before using it; the right fix depends on your program's goal.</p></div>{% endif %}
+            {% if item.example %}<div class="example"><div class="example-label">Learning example</div><pre><code>{{ item.example }}</code></pre></div>{% endif %}
           </article>
         {% endfor %}
         </div>
